@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Double mLatValue;
     Double mLonValue;
     TextView mLatText, mLonText;
-    EditText mQuery, mRadiusInMeters;
+    EditText mQuery, mRadiusInMeters,mRandomPicks;
     Button mSearch;
     String mBearerToken = "";
     List<Business> mBusinessList;
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onResponse(Call<RestaurantsMainObject> call, Response<RestaurantsMainObject> response) {
                 mBusinessList = response.body().getBusinesses();
-                List<Business> randomList = pickRandom(mBusinessList,3);
+                List<Business> randomList = pickRandom(mBusinessList, Integer.parseInt(mRandomPicks.getText().toString()));
 
                 mAdapter.replaceList(randomList);
                 mAdapter.notifyDataSetChanged();
@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mRadiusInMeters = (EditText) findViewById(R.id.radius);
         mSearch = (Button) findViewById(R.id.search);
         mRecyclerView =(RecyclerView)findViewById(R.id.recycler_view);
+        mRandomPicks = (EditText)findViewById(R.id.picks);
 
     }
 
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         List<Business> randomPicks = new ArrayList<>();
         Random picker = new Random();
         if (businessList.size()<=numberToPick){
-            Toast.makeText(this,"Not enough choices",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Not enough choices for randomization",Toast.LENGTH_LONG).show();
             return businessList;
         }
         for (int i =0; i<numberToPick;i++){

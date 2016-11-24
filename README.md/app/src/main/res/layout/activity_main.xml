@@ -45,10 +45,18 @@
 
         <EditText
             android:id="@+id/radius"
-            android:hint="Radius in kilometers (max 40k)"
+            android:hint="Km radius (max 40k)"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:inputType="number"
             android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/picks"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Random picks"
+            android:inputType="number"/>
 
     </LinearLayout>
 
