@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY,0);
                 String radiusInString = mRadiusInMeters.getText().toString();
                 int radiusInInt = (Integer.parseInt(radiusInString))*1000;//Changed to km from meters
                 getRestaurants(mQuery.getText().toString(), radiusInInt);
