@@ -39,6 +39,9 @@ public class BusinessRecyclerViewAdapter extends RecyclerView.Adapter<BusinessVi
     public int getItemCount() {
         return mBusinessList.size();
     }
+    public void replaceList(List<Business> newSearchResult){
+        mBusinessList = newSearchResult;
+    }
 }
 
 class BusinessViewHolder extends RecyclerView.ViewHolder{

@@ -23,9 +23,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import net.serkanbal.yelpapiexample.JSONtoPOJO.Business;
 import net.serkanbal.yelpapiexample.JSONtoPOJO.RestaurantsMainObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     EditText mQuery, mRadiusInMeters;
     Button mSearch;
     String mBearerToken = "";
+    List<Business> mBusinessList;
 
     RecyclerView mRecyclerView;
     BusinessRecyclerViewAdapter mAdapter;
@@ -69,8 +72,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         findViews();
 
+        mBusinessList = new ArrayList<>();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new BusinessRecyclerViewAdapter(mBusinessList);
+
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
 
 
         if (mGoogleApiClient == null) {
@@ -139,7 +148,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         call.enqueue(new Callback<RestaurantsMainObject>() {
             @Override
             public void onResponse(Call<RestaurantsMainObject> call, Response<RestaurantsMainObject> response) {
-                mAdapter = new BusinessRecyclerViewAdapter(response.body().getBusinesses());
+                mBusinessList = response.body().getBusinesses();
+                mAdapter.replaceList(mBusinessList);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
