@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import net.serkanbal.yelpapiexample.JSONtoPOJO.Business;
 import net.serkanbal.yelpapiexample.JSONtoPOJO.Category;
+import net.serkanbal.yelpapiexample.JSONtoPOJO.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,9 @@ class BusinessViewHolder extends RecyclerView.ViewHolder{
         for (Category category: business.getCategories()){
             categoriesText+=(category.getTitle()+", ");
         }
-        mDescView.setText(business.getLocation()+"\n"+business.getPhone()+"\n"+categoriesText);
+        Location location = business.getLocation();
+        String fullAddress = location.getAddress1()+" "+location.getCity();
+        mDescView.setText(fullAddress+"\n"+business.getPhone()+"\n"+categoriesText);
         mPrice.setText(business.getPrice());
         mRating.setText(String.valueOf(business.getRating()));
         //ToDo:Set image by using picasso with image.url

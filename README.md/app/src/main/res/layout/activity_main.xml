@@ -45,7 +45,7 @@
 
         <EditText
             android:id="@+id/radius"
-            android:hint="Radius in meters (max 40k)"
+            android:hint="Radius in kilometers (max 40k)"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"/>

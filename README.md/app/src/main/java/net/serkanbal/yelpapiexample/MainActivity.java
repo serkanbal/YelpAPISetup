@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,8 +27,10 @@ import com.google.android.gms.location.LocationServices;
 import net.serkanbal.yelpapiexample.JSONtoPOJO.Business;
 import net.serkanbal.yelpapiexample.JSONtoPOJO.RestaurantsMainObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View view) {
                 String radiusInString = mRadiusInMeters.getText().toString();
-                int radiusInInt = Integer.parseInt(radiusInString);
+                int radiusInInt = (Integer.parseInt(radiusInString))*1000;//Changed to km from meters
                 getRestaurants(mQuery.getText().toString(), radiusInInt);
             }
         });
@@ -143,13 +146,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         YelpSearchService service = retrofit.create(YelpSearchService.class);
         Call<RestaurantsMainObject> call = service.getRestaurants("Bearer "+mBearerToken, query, "restaurants",
-                3, mLatValue, mLonValue, radius);
+                40, mLatValue, mLonValue, radius);
 
         call.enqueue(new Callback<RestaurantsMainObject>() {
             @Override
             public void onResponse(Call<RestaurantsMainObject> call, Response<RestaurantsMainObject> response) {
                 mBusinessList = response.body().getBusinesses();
-                mAdapter.replaceList(mBusinessList);
+                List<Business> randomList = pickRandom(mBusinessList,3);
+
+                mAdapter.replaceList(randomList);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -254,5 +259,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mSearch = (Button) findViewById(R.id.search);
         mRecyclerView =(RecyclerView)findViewById(R.id.recycler_view);
 
+    }
+
+    public List<Business> pickRandom(List<Business> businessList, int numberToPick){
+        List<Business> randomPicks = new ArrayList<>();
+        Random picker = new Random();
+        if (businessList.size()<=numberToPick){
+            Toast.makeText(this,"Not enough choices",Toast.LENGTH_LONG).show();
+            return businessList;
+        }
+        for (int i =0; i<numberToPick;i++){
+            int randomIndex = picker.nextInt(businessList.size());
+            randomPicks.add(businessList.get(randomIndex));
+            businessList.remove(randomIndex);
+        }
+        return randomPicks;
     }
 }
