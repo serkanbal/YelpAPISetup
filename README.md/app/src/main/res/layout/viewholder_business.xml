@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/business_name_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frank's burger shack"
+        android:textColor="#444"
+        android:textSize="20sp"/>
+    <ImageView
+        android:id="@+id/picture"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:background="#f00"/>
+    <TextView
+        android:id="@+id/description_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/picture"
+        android:layout_below="@id/business_name_view"
+        android:layout_alignBottom="@id/picture"/>
+    <TextView
+        android:id="@+id/price_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price"
+        android:textSize="16sp"
+        android:layout_below="@id/picture"
+        android:textColor="#0faf00"/>
+
+    <TextView
+        android:id="@+id/rating_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PRICE"
+        android:layout_below="@id/picture"
+        android:layout_alignParentRight="true"
+        android:textColor="#ffe600"/>
+
+
+</RelativeLayout>

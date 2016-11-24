@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +24,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import net.serkanbal.yelpapiexample.JSONtoPOJO.RestaurantsMainObject;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,12 +40,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static final String TAG = "Serkan";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+
     Double mLatValue;
     Double mLonValue;
-    TextView mLatText, mLonText, mRestaurant, mRestaurant2, mRestaurant3;
+    TextView mLatText, mLonText;
     EditText mQuery, mRadiusInMeters;
     Button mSearch;
     String mBearerToken = "";
+
+    RecyclerView mRecyclerView;
+    BusinessRecyclerViewAdapter mAdapter;
+
     public static final String[] PERMISSION_LOCATION = {
             android.Manifest.permission.ACCESS_COARSE_LOCATION
     };
@@ -58,14 +67,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLatText = (TextView) findViewById(R.id.lat);
-        mLonText = (TextView) findViewById(R.id.lon);
-        mRestaurant = (TextView) findViewById(R.id.biz1);
-        mRestaurant2 = (TextView) findViewById(R.id.biz2);
-        mRestaurant3 = (TextView) findViewById(R.id.biz3);
-        mQuery = (EditText) findViewById(R.id.query);
-        mRadiusInMeters = (EditText) findViewById(R.id.radius);
-        mSearch = (Button) findViewById(R.id.search);
+        findViews();
+
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -133,9 +139,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         call.enqueue(new Callback<RestaurantsMainObject>() {
             @Override
             public void onResponse(Call<RestaurantsMainObject> call, Response<RestaurantsMainObject> response) {
-                mRestaurant.setText(response.body().getBusinesses().get(0).getName());
-                mRestaurant2.setText(response.body().getBusinesses().get(1).getName());
-                mRestaurant3.setText(response.body().getBusinesses().get(2).getName());
+                mAdapter = new BusinessRecyclerViewAdapter(response.body().getBusinesses());
             }
 
             @Override
@@ -230,5 +234,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 break;
             }
         }
+    }
+    public void findViews(){
+        mLatText = (TextView) findViewById(R.id.lat);
+        mLonText = (TextView) findViewById(R.id.lon);
+        mQuery = (EditText) findViewById(R.id.query);
+        mRadiusInMeters = (EditText) findViewById(R.id.radius);
+        mSearch = (Button) findViewById(R.id.search);
+        mRecyclerView =(RecyclerView)findViewById(R.id.recycler_view);
+
     }
 }
