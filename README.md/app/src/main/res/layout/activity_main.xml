@@ -31,8 +31,45 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <EditText
-        android:hint=""
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/query"
+            android:hint="Search for food"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/radius"
+            android:hint="Radius in meters (max 40k)"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <Button
+        android:text="Search"
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/biz1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/biz2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/biz3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

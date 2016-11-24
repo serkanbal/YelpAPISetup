@@ -12,17 +12,24 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import net.serkanbal.yelpapiexample.JSONtoPOJO.RestaurantsMainObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static java.lang.Integer.parseInt;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -31,7 +38,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Location mLastLocation;
     Double mLatValue;
     Double mLonValue;
-    TextView mLatText, mLonText;
+    TextView mLatText, mLonText, mRestaurant, mRestaurant2, mRestaurant3;
+    EditText mQuery, mRadiusInMeters;
+    Button mSearch;
+    String mBearerToken = "";
     public static final String[] PERMISSION_LOCATION = {
             android.Manifest.permission.ACCESS_COARSE_LOCATION
     };
@@ -41,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static final String YELP_CLIENT_ID = "9YI_a1fQDy1CtSBiZsq6Yw";
     public static final String YELP_APP_SECRET = "edmHqYlFEY4SxJWqkgM76RmkVaXnRyr6UUdc9jXzQglM8TCELkWRGN37CBG3Ztpy";
     public static final String YELP_TOKEN_BASE_URL = "https://api.yelp.com/oauth2/";
-    public static final String YELP_SEARCH3_BASE_URL = "https://api.yelp.com/v3/businesses/";
+    public static final String YELP_SEARCH_BASE_URL = "https://api.yelp.com/v3/businesses/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +60,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         mLatText = (TextView) findViewById(R.id.lat);
         mLonText = (TextView) findViewById(R.id.lon);
+        mRestaurant = (TextView) findViewById(R.id.biz1);
+        mRestaurant2 = (TextView) findViewById(R.id.biz2);
+        mRestaurant3 = (TextView) findViewById(R.id.biz3);
+        mQuery = (EditText) findViewById(R.id.query);
+        mRadiusInMeters = (EditText) findViewById(R.id.radius);
+        mSearch = (Button) findViewById(R.id.search);
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -60,6 +76,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
         getBearerToken();
+
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String radiusInString = mRadiusInMeters.getText().toString();
+                int radiusInInt = Integer.parseInt(radiusInString);
+                getRestaurants(mQuery.getText().toString(), radiusInInt);
+            }
+        });
 
     }
 
@@ -83,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             call.enqueue(new Callback<YelpBearerTokenObject>() {
                 @Override
                 public void onResponse(Call<YelpBearerTokenObject> call, Response<YelpBearerTokenObject> response) {
-                    String bearerToken = response.body().getAccessToken();
-                    Log.d(TAG, "onResponse: " + bearerToken);
+                    mBearerToken = response.body().getAccessToken();
+                    Log.d(TAG, "onResponse: " + mBearerToken);
                 }
 
                 @Override
@@ -95,7 +120,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    public void getRestaurants()
+    public void getRestaurants(String query, int radius) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(YELP_SEARCH_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        YelpSearchService service = retrofit.create(YelpSearchService.class);
+        Call<RestaurantsMainObject> call = service.getRestaurants("Bearer "+mBearerToken, query, "restaurants",
+                3, mLatValue, mLonValue, radius);
+
+        call.enqueue(new Callback<RestaurantsMainObject>() {
+            @Override
+            public void onResponse(Call<RestaurantsMainObject> call, Response<RestaurantsMainObject> response) {
+                mRestaurant.setText(response.body().getBusinesses().get(0).getName());
+                mRestaurant2.setText(response.body().getBusinesses().get(1).getName());
+                mRestaurant3.setText(response.body().getBusinesses().get(2).getName());
+            }
+
+            @Override
+            public void onFailure(Call<RestaurantsMainObject> call, Throwable t) {
+                //Do nothing.
+            }
+        });
+
+    }
 
     @Override
     protected void onStart() {
