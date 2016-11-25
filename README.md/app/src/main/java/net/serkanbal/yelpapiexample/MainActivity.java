@@ -268,14 +268,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public List<Business> pickRandom(List<Business> businessList, int numberToPick){
         List<Business> randomPicks = new ArrayList<>();
         Random picker = new Random();
-        if (businessList.size()<=numberToPick){
-            Toast.makeText(this,"Not enough choices for randomization",Toast.LENGTH_LONG).show();
-            return businessList;
-        }
         for (int i =0; i<numberToPick;i++){
+            if (businessList.size()==0){
+                Toast.makeText(this, "Not enough meet criteria", Toast.LENGTH_SHORT).show();
+                break;
+            }
             int randomIndex = picker.nextInt(businessList.size());
-            randomPicks.add(businessList.get(randomIndex));
-            businessList.remove(randomIndex);
+            Business randomBusiness = businessList.get(randomIndex);
+
+            /*Added hardcoded conditional to skip over restaurants with rating less than 3.5 and excluding any with price over '$'.
+            We can just replace the hardcoded values with user's preferences.
+            Apparently some places can have an empty price rating. (ex. "Simply Sushi")
+             */
+            if (randomBusiness.getRating()<3.5 || randomBusiness.getPrice()!=null && randomBusiness.getPrice().length()>=2){
+                i--;
+            }else{
+                randomPicks.add(randomBusiness);
+            }
+            businessList.remove(randomIndex); //Removes randomly picked business to prevent duplicates showing up in random selection
+
         }
         return randomPicks;
     }
